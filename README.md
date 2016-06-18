@@ -1,5 +1,5 @@
 ##About
-[FreeRTOS](http://www.freertos.org/) ported to [Pandaboard](http://infocenter.arm.com/help/topic/com.arm.doc.dui0225d/DUI0225D_versatile_application_baseboard_arm926ej_s_ug.pdf),
+[FreeRTOS](http://www.freertos.org/) ported to [Pandaboard](https://en.wikipedia.org/wiki/PandaBoard),
 based on the Cortex-A8 CPU.
 
 A port of FreeRTOS to the Pandaboard
