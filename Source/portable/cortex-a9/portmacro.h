@@ -72,6 +72,8 @@
 #ifndef PORTMACRO_H
 #define PORTMACRO_H
 
+#include "FreeRTOSConfig.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

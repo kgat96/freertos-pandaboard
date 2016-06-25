@@ -35,6 +35,8 @@
 
         .section .isr_vector, "x"
 
+.global Vector_Init
+
 Vector_Init:
         LDR     PC, Reset_Addr
         LDR     PC, Undefined_Addr
@@ -58,9 +60,12 @@ FIQ_Addr:        .word     FIQ_Handler
 // ************************
 
 Reset_Handler:
-	LDR			SP, Stack_Addr
-	B			_init
-Stack_Addr:		.word	  __stack
+    LDR			SP, Stack_Addr
+    //LDR         SP, =stack_top
+    B           _init
+
+Stack_Addr:
+    .word __stack
 
 Undefined_Handler:
     // Put system/user mode R14-R0, exception address (LR - (4(ARM) or 2(THUMB))) and SPSR on stack
@@ -117,6 +122,11 @@ SWI_Handler:
 FIQ_Handler:
 IRQ_Handler:
 	B					vPortInterruptContext
+
+__bss_begin_addr:
+    .word __bss_begin
+__bss_end_addr:
+    .word __bss_end
 
     .end
 

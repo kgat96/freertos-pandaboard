@@ -248,7 +248,7 @@ void vPortYieldFromISR( void )
 /*
  * See header file for description.
  */
-portBASE_TYPE xPortStartScheduler( void )
+BaseType_t xPortStartScheduler( void )
 {
 	/* Start the timer that generates the tick ISR.  Interrupts are disabled
 	here already. */
@@ -553,6 +553,35 @@ static void WriteACTLR(unsigned long ACTLR)
 }
 #endif
 
+void kputc(char c)
+{
+    volatile unsigned int *lsr = (unsigned int *) 0x48020014;
+    volatile unsigned int *thr = (unsigned int *) 0x48020000;
+
+    if (c == '\n') {
+        while (!(*lsr & 0x20));
+        *thr = '\r';
+    }
+
+    while (!(*lsr & 0x20));
+    *thr = c;
+}
+
+void kputhex(unsigned int value, int digits)
+{
+    while (digits-- > 0) {
+        unsigned int tmp = (value >> (4 * digits)) & 0xf;
+        kputc(tmp > 9 ? tmp - 10 + 'a' : tmp + '0');
+    }
+}
+
+void kputs(char *s)
+{
+    while (*s) {
+        kputc(*s++);
+    }
+}
+
 void _init(void)
 {
 extern int main( void );
@@ -578,33 +607,38 @@ extern unsigned long _ebss;
 
 	// Invalidate data cache.
 	__asm volatile("mrc p15, 1, %[csir], c0, c0, 0"
-	:[csir] "=r" (CSIR)::);
-	cachesets=((CSIR>>13)&0x1ff)+1;
+     :[csir] "=r" (CSIR)::);
+     cachesets=((CSIR>>13)&0x1ff)+1;
 
-	for(j=0;j<4;j++)
-	for(i=0;i<cachesets;i++)
-	{
-		unsigned long line=(j<<30)|(i<<5);
-		__asm volatile ("mcr   p15, 0, %[line], c7, c6, 2"::[line] "r" (line):);
-	}
+     for(j=0;j<4;j++)
+     for(i=0;i<cachesets;i++)
+     {
+     unsigned long line=(j<<30)|(i<<5);
+     __asm volatile ("mcr   p15, 0, %[line], c7, c6, 2"::[line] "r" (line):);
+     }
 
-	// Invalidate TLB.
-	__asm volatile ("mcr   p15, 0, %[zero], c8, c7, 0"::[zero] "r" (0):);
-*/
+     // Invalidate TLB.
+     __asm volatile ("mcr   p15, 0, %[zero], c8, c7, 0"::[zero] "r" (0):);
+     */
 
-	/* Copy the data segment initializers from flash to SRAM. */
-	/* Disabled: The linker script just uses one copy of the data segment in RAM on the Versatile. */
-/*	pulSrc = &_etext;
-	for(pulDest = &_data; pulDest < &_edata; )
-	{
-		*pulDest++ = *pulSrc++;
-	}*/
+    /* Copy the data segment initializers from flash to SRAM. */
+    /* Disabled: The linker script just uses one copy of the data segment in RAM on the Versatile. */
+    /*	pulSrc = &_etext;
+     for(pulDest = &_data; pulDest < &_edata; )
+     {
+     *pulDest++ = *pulSrc++;
+     }*/
 
-	/* Zero fill the bss segment. */
-	for(pulDest = &_bss; pulDest < &_ebss; )
-	{
-		*pulDest++ = 0;
-	}
+    //kputc('#');kputc('*');kputc('@');
+
+    kputc('#'); kputhex((int)&_ebss, 8);kputc('@');kputhex((int)&_bss, 8);kputc('\n');
+    /* Zero fill the bss segment. */
+    for (pulDest = &_bss; pulDest < &_ebss;)
+    {
+        *pulDest++ = 0;
+    }
+    kputc('@');
+
 
 	/* Configure the Stack Pointer for the Processor Modes. */
 	__asm volatile (
@@ -639,6 +673,9 @@ extern unsigned long _ebss;
 				[abtsp] "r" (puxAbortStackPointer),
 				[svcsp] "r" (puxSVCStackPointer)
 				:  );
+
+
+
 
 	/* Finally, copy the exception vector table over the boot loader. */
 	pulSrc = (unsigned long *)&__isr_vector_start;

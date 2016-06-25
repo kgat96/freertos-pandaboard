@@ -127,15 +127,15 @@ int main( void )
 
 	/* Start the standard demo tasks. */
 	vStartIntegerMathTasks( tskIDLE_PRIORITY );
-//	vStartPolledQueueTasks( mainQUEUE_POLL_PRIORITY );
-//	vStartSemaphoreTasks( mainSEM_TEST_PRIORITY );
-//	vStartBlockingQueueTasks( mainBLOCK_Q_PRIORITY );
-//	vStartCountingSemaphoreTasks();
-//	vStartDynamicPriorityTasks();
-//	vStartMathTasks( tskIDLE_PRIORITY );
-//	vStartGenericQueueTasks( mainGEN_Q_PRIORITY );
-//	vStartQueuePeekTasks();
-//	vStartRecursiveMutexTasks();
+    vStartPolledQueueTasks( mainQUEUE_POLL_PRIORITY );
+    vStartSemaphoreTasks( mainSEM_TEST_PRIORITY );
+    vStartBlockingQueueTasks( mainBLOCK_Q_PRIORITY );
+    vStartCountingSemaphoreTasks();
+    vStartDynamicPriorityTasks();
+//    vStartMathTasks( tskIDLE_PRIORITY );
+    vStartGenericQueueTasks( mainGEN_Q_PRIORITY );
+    vStartQueuePeekTasks();
+    vStartRecursiveMutexTasks();
 /*	vAltStartComTestTasks( tskIDLE_PRIORITY + 1, 3, 0 );	*/
 
 #if configPLATFORM == 1

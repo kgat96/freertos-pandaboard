@@ -50,7 +50,7 @@ SOURCE_DIR = ../..
 
 S_FILES = Demo/versatilepb/startup.s
 
-C_FILES = Demo/versatilepb/main.c \
+C_FILES =   Demo/versatilepb/main.c \
 			Demo/versatilepb/init.c \
 			Demo/versatilepb/print.c \
 			Demo/versatilepb/receive.c \
@@ -67,6 +67,8 @@ C_FILES = Demo/versatilepb/main.c \
 
 
 C_OBJS = $(C_FILES:%.c=$(BUILD_DIR)/%.o)
+
+S_OBJS = $(S_FILES:%.s=$(BUILD_DIR)/%.o)
 
 ALL_CFLAGS = $(C_OPTS) $(DEFINES) $(CFLAGS)
 ALL_LDFLAGS = $(LD_FLAGS) -T qemu.ld
@@ -99,7 +101,7 @@ $(BUILD_DIR) :
 #$(ELF_IMAGE) : $(OBJS) $(LINKER_SCRIPT)
 #	$(LD) -nostdlib -L $(OBJDIR) -T $(LINKER_SCRIPT) $(OBJS) $(OFLAG) $@
 
-$(ELF_IMAGE) : $(C_OBJS)
+$(ELF_IMAGE) : $(C_OBJS) $(S_OBJS)
 	$(LD) $(ALL_LDFLAGS) -o $@ $^ $(LIBS)
 	
 debug : _debug_flags all
@@ -110,6 +112,10 @@ _debug_flags :
 	$(eval CFLAGS += $(DEB_FLAG))
 
 $(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(ALL_CFLAGS) $(AUTODEPENDENCY_CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.s
 	@mkdir -p $(dir $@)
 	$(CC) $(ALL_CFLAGS) $(AUTODEPENDENCY_CFLAGS) -c $< -o $@
 

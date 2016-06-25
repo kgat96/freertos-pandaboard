@@ -21,6 +21,7 @@ SECTIONS
         *(.rodata*)
         _etext = .;
     } > ram
+    
     .data : /*AT(ADDR(.text) + SIZEOF(.text))*/
     {
         _data = .;
@@ -28,12 +29,14 @@ SECTIONS
         *(.data*)
         _edata = .;
     } > ram
+    
     .bss :
     {
         _bss = .;
-        *(.bss*)
-        *(COMMON)
+        __bss_begin = .;
+        *(.bss)
         _ebss = .;
+        __bss_end = .;
     } > ram
 }
 
