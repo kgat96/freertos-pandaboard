@@ -32,16 +32,16 @@ S_OPTS =	-I. \
 			-I"$(SOURCE_DIR)/Source/portable/armv7r" \
 			-mthumb -D__ASSEMBLY__ -g -msoft-float -march=armv7-a
 
-C_FILES = Source/croutine.c \
-			Source/list.c \
-			Source/queue.c \
-			Source/tasks.c \
-			Source/timers.c \
-			Source/portable/MemMang/heap_2.c \
-			Source/portable/armv7r/port.c \
+C_FILES =   Source/portable/armv7r/port.c \
 			Demo/pandaboard/main.c
 
 			#
+			#Source/croutine.c \
+			#Source/list.c \
+			#Source/queue.c \
+			#Source/tasks.c \
+			#Source/timers.c \
+			#Source/portable/MemMang/heap_2.c \
 
 S_FILES = Demo/pandaboard/startup.S
 

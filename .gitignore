@@ -1,6 +1,8 @@
 # Ignore all intermediate files in obj
 obj/
 
+*.lst
+
 # Object files:
 *.o
 

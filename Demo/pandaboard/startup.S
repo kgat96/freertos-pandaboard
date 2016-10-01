@@ -50,9 +50,9 @@ data_abort_handler_addr:
 invalid_addr_handler:
     .word unhandled
 irq_handler_addr:
-    .word unhandled
+    .word irq_handler
 fiq_handler_addr:
-    .word unhandled
+    .word fiq_handler
 
 vectors_end:
 
@@ -115,9 +115,13 @@ bss_clear_loop:
     ORR r1, r1, #MODE_SVC
     MSR cpsr, r1
 
+    @ VBAR, Vector Base Address Register, Security Extensions
+    ldr r0, =vectors_start
+    mcr p15, 0, r0, c12, c0, 0  @Set VBAR
+
     BL _init                               @ before the application is started, initialize all hardware
 
-    B _main                                 @ and finally start the application
+    B _main                                @ and finally start the application
 
 unhandled:
     B .                                    @ infinite loop for unsupported exceptions
